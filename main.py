@@ -4,7 +4,7 @@ import random as r
 
 def main():
     pygame.init()
-
+    
     width = 800
     height = 720
 
@@ -13,17 +13,22 @@ def main():
 
     clock = pygame.time.Clock()
     running = True
+    testFont = pygame.font.Font('font\Pixeled.ttf', 18)
+    score = 0
 
-    spaceSurface = pygame.image.load('background-blue.png')
+    spaceSurface = pygame.image.load('background-blue.png').convert_alpha()
     spaceSurface = pygame.transform.scale(spaceSurface, (width, height))
     
-    planetSurface = pygame.image.load('sprites\spacepixels-0.2.0\planets\planet5.png')
+    planetSurface = pygame.image.load('sprites\spacepixels-0.2.0\planets\planet5.png').convert_alpha()
     planetSurface = pygame.transform.scale(planetSurface, (width*.15, height*.15))
+    planetRect = planetSurface.get_rect()
     
-    player = pygame.image.load('sprites\space_pixels_ships_stroked\ship_green_stroked.png')
-
-    xPlanet = r.randrange(0,width)*.9
-    yPlanet = height*.1
+    playerSurface = pygame.image.load('sprites\space_pixels_ships_stroked\ship_green_stroked.png').convert_alpha()
+    playerRect = playerSurface.get_rect(midbottom = (350,720))
+    
+    textSurface = testFont.render("Score: "+str(score), False, "White")
+    
+    planetRect.right = r.randrange(0,width)
     
     # if the game is still running, don't close it, but if we close the terminal, then quit the game
     while running:
@@ -34,15 +39,17 @@ def main():
                 
         #background color is black
         screen.blit(spaceSurface,(0,0))
-        screen.blit(planetSurface, (xPlanet,yPlanet))
-        screen.blit(player,(width/2, height-100))
+        screen.blit(planetSurface, planetRect)
+        screen.blit(playerSurface,playerRect)
+        screen.blit(textSurface,(30,height-50))
         
-        if not yPlanet > height:
-            yPlanet += 0.3
+        if not planetRect.top > height:
+            planetRect.y += 1
         else:
-            xPlanet = r.randrange(0,width)*.9
-            yPlanet = -100
-        
+            planetRect.x = r.randrange(0,width)*.9
+            print(planetRect.x)
+            planetRect.y = -100
+
         #TODO RENDER GAME HERE
         
         #draw and update everything
