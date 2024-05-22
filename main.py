@@ -67,7 +67,7 @@ def main():
                 direction = direction * -1
                 print(direction)
                 for enemy in enemies:
-                    enemy.y += 10
+                    enemy.y += 20
             if any(enemy.colliderect(projectile) for projectile in projectiles):
                 enemies.remove(enemy)
                 projectiles.pop()
@@ -108,11 +108,11 @@ def main():
         # do it this method, otherwise there'd be no continous movement       
         if keys[pygame.K_a] and playerRect.x > 0:
             playerRect.x -= 5
-        if keys[pygame.K_d] and playerRect.x < width:
+        if keys[pygame.K_d] and playerRect.x < width-100:
             playerRect.x += 5
-        if keys[pygame.K_w]:
+        if keys[pygame.K_w] and playerRect.y > 500:
             playerRect.y -= 5
-        if keys[pygame.K_s]:
+        if keys[pygame.K_s] and playerRect.y < height-100:
             playerRect.y += 5
         if keys[pygame.K_SPACE]:
             projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
