@@ -29,9 +29,20 @@ def main():
     
     textSurface = testFont.render("Score: "+str(score), False, "White")
     
+    projectileSurface = pygame.image.load('sprites\spacepixels-0.1.0\pixel_laser_blue.png').convert_alpha()
+    projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
+        
     planetRect.right = r.randrange(0,width)
     
-    projectileSurface = pygame.image.load('sprites\spacepixels-0.1.0\horizontal_bar_blue.png')
+    # list of projectiles on screen
+    projectiles = []
+    
+    class pp(object):
+        def __init__(self,x,y):
+            self.x = x
+            self.y = y
+            self.vel = 8
+
     
     # if the game is still running, don't close it, but if we close the terminal, then quit the game
     while running:
@@ -56,15 +67,20 @@ def main():
             planetRect.x = r.randrange(0,width)*.9
             print(planetRect.x)
             planetRect.y = -100
-
-        def shoot():    
-            projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
-            screen.blit(projectileSurface, projectileRect)
-            
-        #todo
+        
+        # generates a fucking projectile, fuck this code    
+        for projectile in projectiles:
+            print(height)
+            print(projectile.y)
+            if projectile.y < height and projectile.y >= 0:
+                screen.blit(projectileSurface, projectileRect)
+                projectile.y -= 50
+            else:
+                projectiles.pop()
+        
         keys = pygame.key.get_pressed()
         # if certain keys are pressed then move the player in that direction,
-        # done this method, otherwise there'd be no continous movement        
+        # do it this method, otherwise there'd be no continous movement       
         if keys[pygame.K_a]:
             playerRect.x -= 5
         if keys[pygame.K_d]:
@@ -74,14 +90,15 @@ def main():
         if keys[pygame.K_s]:
             playerRect.y += 5
         if keys[pygame.K_SPACE]:
-            shoot()
-            
+            projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
+            projectiles.append(projectileRect)            
         
         #draw and update everything
         pygame.display.update()
         
         # framerate is 60 fps
         clock.tick(60)
+        
         
     pygame.quit()
     
