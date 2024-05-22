@@ -57,32 +57,34 @@ def main():
         screen.blit(planetSurface, planetRect)
         screen.blit(playerSurface,playerRect)
         screen.blit(textSurface,(30,height-50))
+        screen.blit(enemySurface,enemyRect)                           
+
         
         # resetting the planet sprite to reappear at random points outside the screen
         if not planetRect.top > height:
             planetRect.y += 1
         else:
             planetRect.x = r.randrange(0,width)*.9
-            print(planetRect.x)
             planetRect.y = -100
         
         # generates a fucking projectile, fuck this code    
         for projectile in projectiles:
-            if projectile.y >= 0:
+            if not projectile.y == 0:
                 screen.blit(projectileSurface, projectileRect)
                 projectile.y -= 50
             else:
                 projectiles.pop()
-        newEnemy = enemyRect
-        enemies.append(newEnemy)
+
+        enemies.append(enemyRect)
         
+        # what the fuck is this shit
         for enemy in enemies:
             if enemy.colliderect(projectileRect):
                 enemies.pop()
+                score += 1
             else:
-                screen.blit(enemySurface, enemyRect)
                 enemy.x += 1
-        
+                screen.blit(enemySurface, enemyRect)
         keys = pygame.key.get_pressed()
         # if certain keys are pressed then move the player in that direction,
         # do it this method, otherwise there'd be no continous movement       
