@@ -5,7 +5,7 @@ import random as r
 def main():
     pygame.init()
     
-    width = 800
+    width = 1280
     height = 720
 
     screen = pygame.display.set_mode((width, height))
@@ -20,7 +20,7 @@ def main():
     spaceSurface = pygame.transform.scale(spaceSurface, (width, height))
     
     planetSurface = pygame.image.load('sprites\spacepixels-0.2.0\planets\planet5.png').convert_alpha()
-    planetSurface = pygame.transform.scale(planetSurface, (width*.15, height*.15))
+    planetSurface = pygame.transform.scale(planetSurface, (100, 100))
     planetRect = planetSurface.get_rect()
     
     playerSurface = pygame.image.load('sprites\space_pixels_ships_stroked\ship_green_stroked.png').convert_alpha()
@@ -30,6 +30,7 @@ def main():
     textSurface = testFont.render("Score: "+str(score), False, "White")
     
     projectileSurface = pygame.image.load('sprites\spacepixels-0.1.0\pixel_laser_blue.png').convert_alpha()
+    projectileSurface = pygame.transform.scale(projectileSurface, (30, 30))
     projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
     
     enemySurface = pygame.image.load('sprites\spacepixels-0.2.0\pixel_station_green.png').convert_alpha()
@@ -45,7 +46,7 @@ def main():
     
     
     def add_enemy():
-        new_enemy = enemySurface.get_rect(center=(r.randrange(10, width-10), 100))
+        new_enemy = enemySurface.get_rect(center=(r.randrange(60, width-60), 100))
         enemies.append(new_enemy)
     
     def move_projectiles():
@@ -59,15 +60,19 @@ def main():
     def move_enemies():
         nonlocal direction
         nonlocal score
+        nonlocal maxEnemies
         for enemy in enemies:
             enemy.x += direction
             if enemy.x >= width-50 or enemy.x <= 0:
                 direction = direction * -1
                 print(direction)
-                enemy.y += 10
+                for enemy in enemies:
+                    enemy.y += 10
             if any(enemy.colliderect(projectile) for projectile in projectiles):
                 enemies.remove(enemy)
+                projectiles.pop()
                 score += 1
+                maxEnemies += 1
             else:
                 screen.blit(enemySurface, enemy)
                 
@@ -101,9 +106,9 @@ def main():
         
         # if certain keys are pressed then move the player in that direction,
         # do it this method, otherwise there'd be no continous movement       
-        if keys[pygame.K_a]:
+        if keys[pygame.K_a] and playerRect.x > 0:
             playerRect.x -= 5
-        if keys[pygame.K_d]:
+        if keys[pygame.K_d] and playerRect.x < width:
             playerRect.x += 5
         if keys[pygame.K_w]:
             playerRect.y -= 5
