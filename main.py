@@ -31,18 +31,16 @@ def main():
     
     projectileSurface = pygame.image.load('sprites\spacepixels-0.1.0\pixel_laser_blue.png').convert_alpha()
     projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
+    
+    enemySurface = pygame.image.load('sprites\spacepixels-0.2.0\pixel_station_green.png').convert_alpha()
+    enemySurface = pygame.transform.scale(enemySurface, (100,100))
+    enemyRect = enemySurface.get_rect()
         
     planetRect.right = r.randrange(0,width)
     
     # list of projectiles on screen
     projectiles = []
-    
-    class pp(object):
-        def __init__(self,x,y):
-            self.x = x
-            self.y = y
-            self.vel = 8
-
+    enemies = []
     
     # if the game is still running, don't close it, but if we close the terminal, then quit the game
     while running:
@@ -70,13 +68,20 @@ def main():
         
         # generates a fucking projectile, fuck this code    
         for projectile in projectiles:
-            print(height)
-            print(projectile.y)
-            if projectile.y < height and projectile.y >= 0:
+            if projectile.y >= 0:
                 screen.blit(projectileSurface, projectileRect)
                 projectile.y -= 50
             else:
                 projectiles.pop()
+        newEnemy = enemyRect
+        enemies.append(newEnemy)
+        
+        for enemy in enemies:
+            if enemy.colliderect(projectileRect):
+                enemies.pop()
+            else:
+                screen.blit(enemySurface, enemyRect)
+                enemy.x += 1
         
         keys = pygame.key.get_pressed()
         # if certain keys are pressed then move the player in that direction,
