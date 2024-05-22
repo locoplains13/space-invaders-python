@@ -33,7 +33,6 @@ def main():
     projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
     
     enemySurface = pygame.image.load('sprites\spacepixels-0.2.0\pixel_station_green.png').convert_alpha()
-    enemySurface = pygame.transform.scale(enemySurface, (100,100))
     enemyRect = enemySurface.get_rect()
         
     planetRect.right = r.randrange(0,width)
@@ -41,6 +40,34 @@ def main():
     # list of projectiles on screen
     projectiles = []
     enemies = []
+    
+    def add_enemy():
+        new_enemy = enemySurface.get_rect(center=(r.randrange(0, width), -50))
+        enemies.append(new_enemy)
+    
+    def move_projectiles():
+        for projectile in projectiles:
+            projectile.y -= 50
+            if projectile.y < 0:
+                projectiles.remove(projectile)
+            else:
+                screen.blit(projectileSurface, projectile)
+    
+    def move_enemies():
+        direction = 2
+        nonlocal score
+        for enemy in enemies:
+            enemy.x += direction
+            if enemy.x > width:
+                enemies.remove(enemy)
+            if any(enemy.colliderect(projectile) for projectile in projectiles):
+                enemies.remove(enemy)
+                score += 1
+            else:
+                screen.blit(enemySurface, enemy)
+            
+    
+    add_enemy()
     
     # if the game is still running, don't close it, but if we close the terminal, then quit the game
     while running:
@@ -68,24 +95,10 @@ def main():
             planetRect.y = -100
         
         # generates a fucking projectile, fuck this code    
-        for projectile in projectiles:
-            if not projectile.y == 0:
-                screen.blit(projectileSurface, projectileRect)
-                projectile.y -= 50
-            else:
-                projectiles.pop()
 
         enemies.append(enemyRect)
-        
-        # what the fuck is this shit
-        for enemy in enemies:
-            if enemy.colliderect(projectileRect):
-                enemies.pop()
-                score += 1
-            else:
-                enemy.x += 1
-                screen.blit(enemySurface, enemyRect)
         keys = pygame.key.get_pressed()
+        
         # if certain keys are pressed then move the player in that direction,
         # do it this method, otherwise there'd be no continous movement       
         if keys[pygame.K_a]:
@@ -98,8 +111,14 @@ def main():
             playerRect.y += 5
         if keys[pygame.K_SPACE]:
             projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
-            projectiles.append(projectileRect)            
+            if(len(projectiles) < 1):
+                projectiles.append(projectileRect)            
         
+        move_projectiles()
+        move_enemies()
+        
+        if r.random() < 0.02:
+            add_enemy()
         #draw and update everything
         pygame.display.update()
         
