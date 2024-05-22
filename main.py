@@ -24,25 +24,32 @@ def main():
     planetRect = planetSurface.get_rect()
     
     playerSurface = pygame.image.load('sprites\space_pixels_ships_stroked\ship_green_stroked.png').convert_alpha()
+    playerSurface = pygame.transform.scale(playerSurface, (100,100))
     playerRect = playerSurface.get_rect(midbottom = (350,720))
     
     textSurface = testFont.render("Score: "+str(score), False, "White")
     
     planetRect.right = r.randrange(0,width)
     
+    projectileSurface = pygame.image.load('sprites\spacepixels-0.1.0\horizontal_bar_blue.png')
+    
     # if the game is still running, don't close it, but if we close the terminal, then quit the game
     while running:
+        
         for event in pygame.event.get():
-            if event == pygame.QUIT:
+            if event.type == pygame.QUIT:
+                running = False
                 pygame.quit()
-                exit()
+                quit()
                 
-        #background color is black
+        # background color is black
+        # declaring also every other surface on the display
         screen.blit(spaceSurface,(0,0))
         screen.blit(planetSurface, planetRect)
         screen.blit(playerSurface,playerRect)
         screen.blit(textSurface,(30,height-50))
         
+        # resetting the planet sprite to reappear at random points outside the screen
         if not planetRect.top > height:
             planetRect.y += 1
         else:
@@ -50,7 +57,25 @@ def main():
             print(planetRect.x)
             planetRect.y = -100
 
-        #TODO RENDER GAME HERE
+        def shoot():    
+            projectileRect = projectileSurface.get_rect(center = (playerRect.x, playerRect.y))
+            screen.blit(projectileSurface, projectileRect)
+            
+        #todo
+        keys = pygame.key.get_pressed()
+        # if certain keys are pressed then move the player in that direction,
+        # done this method, otherwise there'd be no continous movement        
+        if keys[pygame.K_a]:
+            playerRect.x -= 5
+        if keys[pygame.K_d]:
+            playerRect.x += 5
+        if keys[pygame.K_w]:
+            playerRect.y -= 5
+        if keys[pygame.K_s]:
+            playerRect.y += 5
+        if keys[pygame.K_SPACE]:
+            shoot()
+            
         
         #draw and update everything
         pygame.display.update()
